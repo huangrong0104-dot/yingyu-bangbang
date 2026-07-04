@@ -27,6 +27,11 @@ async function loadCommonJs(path, modules) {
 }
 
 async function loadLessons() {
+  if (Array.isArray(window.YINGBANG_LESSONS)) {
+    lessons = window.YINGBANG_LESSONS;
+    return;
+  }
+
   const audioModule = await loadCommonJs("./utils/audio.js", {});
   const wordDetails = await loadCommonJs("./utils/wordDetails.js", {
     "./audio": audioModule
@@ -361,7 +366,7 @@ loadLessons()
     buildGlossary();
     render();
   })
-  .catch(() => {
+  .catch((error) => {
     $("#todayTitle").textContent = "加载失败";
-    $("#wordList").innerHTML = `<div class="empty">请用本地服务打开手机网页版，不要直接双击 HTML 文件。</div>`;
+    $("#wordList").innerHTML = `<div class="empty">课程数据暂时没有加载出来：${escapeHtml(error.message || "未知错误")}</div>`;
   });
