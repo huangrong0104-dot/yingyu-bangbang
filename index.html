@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>英语邦邦</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <div>
+          <h1>英语邦邦</h1>
+          <p>每天 15 分钟，先把工作英语用起来。</p>
+        </div>
+        <div class="day-badge" id="dayBadge">Day 1</div>
+      </section>
+
+      <section class="progress-card">
+        <div class="progress-row">
+          <span id="theme">今日学习</span>
+          <strong id="completedText">0 / 30</strong>
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="学习区域">
+        <button class="tab active" data-tab="today">今日</button>
+        <button class="tab" data-tab="plan">计划</button>
+        <button class="tab" data-tab="review">复习</button>
+      </nav>
+
+      <section class="panel active" id="todayPanel">
+        <div class="card intro">
+          <div>
+            <h2 id="todayTitle">加载中...</h2>
+            <p>记 5 个词，跟读 3 句，开口 1 次。</p>
+          </div>
+          <span>15分钟</span>
+        </div>
+
+        <div class="card">
+          <h2>5个工作词</h2>
+          <div id="wordList"></div>
+        </div>
+
+        <div class="card">
+          <h2>跟读3句</h2>
+          <div id="sentenceList"></div>
+        </div>
+
+        <div class="card">
+          <h2>工作小对话</h2>
+          <p class="soft">跟着 A/B 角色读一遍，再换角色读一遍。</p>
+          <div id="dialogueList"></div>
+        </div>
+
+        <div class="card">
+          <h2>今天开口</h2>
+          <p class="output" id="outputTask"></p>
+        </div>
+
+        <button class="primary" id="completeBtn">完成今天打卡</button>
+      </section>
+
+      <section class="panel" id="planPanel">
+        <div class="card">
+          <h2>30天计划</h2>
+          <p class="soft">点任意一天，可以切换到当天内容。</p>
+        </div>
+        <div id="planList"></div>
+      </section>
+
+      <section class="panel" id="reviewPanel">
+        <div class="card">
+          <h2>今日复习</h2>
+          <p class="soft">从已完成内容里抽 5 个词。先眼熟，再嘴熟。</p>
+          <button class="secondary" id="shuffleBtn">换一组</button>
+          <div id="reviewList"></div>
+        </div>
+        <button class="danger" id="resetBtn">重新开始30天</button>
+      </section>
+    </main>
+
+    <div class="word-modal" id="wordModal" aria-hidden="true">
+      <div class="word-modal-backdrop" data-close-word-modal></div>
+      <section class="word-modal-card" role="dialog" aria-modal="true" aria-label="单词解释">
+        <div class="word-modal-head">
+          <div>
+            <h2 id="modalWord">word</h2>
+            <p id="modalPhonetic"></p>
+          </div>
+          <button class="modal-close" data-close-word-modal>关闭</button>
+        </div>
+        <p class="meaning" id="modalMeaning"></p>
+        <button class="primary modal-play" id="modalPlay">播放发音</button>
+        <div class="label">多重解释</div>
+        <div id="modalMeanings"></div>
+        <div class="label">相似/相关词</div>
+        <div class="tags" id="modalSimilar"></div>
+        <div class="label">例句</div>
+        <div class="line" id="modalExample"></div>
+        <div class="memory" id="modalMemory"></div>
+      </section>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
