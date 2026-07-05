@@ -9,7 +9,7 @@ let modalAudioPath = "";
 let modalWordKey = "";
 let preferredVoice = null;
 let onlineAudio = null;
-const appVersion = "20260705-7";
+const appVersion = "20260705-8";
 
 const state = {
   tab: "today"
@@ -379,7 +379,7 @@ async function loadCommonJs(path, modules) {
   let response = null;
 
   for (const candidate of candidates) {
-    response = await fetch(candidate);
+    response = await fetch(candidate, { cache: "no-store" });
     if (response.ok) {
       break;
     }
@@ -396,19 +396,45 @@ async function loadCommonJs(path, modules) {
   return module.exports;
 }
 
+function repoBasePath() {
+  const parts = location.pathname.split("/").filter(Boolean);
+  const mobileIndex = parts.indexOf("mobile-web");
+
+  if (mobileIndex > 0) {
+    return `/${parts.slice(0, mobileIndex).join("/")}`;
+  }
+
+  if (location.hostname.endsWith("github.io") && parts.length > 0) {
+    return `/${parts[0]}`;
+  }
+
+  return "";
+}
+
+function dataPaths(name) {
+  const base = repoBasePath();
+  const paths = [
+    `./utils/${name}?v=${appVersion}`,
+    `../utils/${name}?v=${appVersion}`,
+    `${base}/utils/${name}?v=${appVersion}`,
+    `/utils/${name}?v=${appVersion}`
+  ];
+
+  return [...new Set(paths)];
+}
+
 async function loadLessons() {
   if (Array.isArray(window.YINGBANG_LESSONS)) {
     lessons = window.YINGBANG_LESSONS;
     return;
   }
 
-  const paths = (name) => [`./utils/${name}?v=${appVersion}`, `../utils/${name}?v=${appVersion}`, `/utils/${name}?v=${appVersion}`];
-  const audioModule = await loadCommonJs(paths("audio.js"), {});
-  const wordDetails = await loadCommonJs(paths("wordDetails.js"), {
+  const audioModule = await loadCommonJs(dataPaths("audio.js"), {});
+  const wordDetails = await loadCommonJs(dataPaths("wordDetails.js"), {
     "./audio": audioModule
   });
-  const translations = await loadCommonJs(paths("translations.js"), {});
-  const lessonModule = await loadCommonJs(paths("lessons.js"), {
+  const translations = await loadCommonJs(dataPaths("translations.js"), {});
+  const lessonModule = await loadCommonJs(dataPaths("lessons.js"), {
     "./audio": audioModule,
     "./wordDetails": wordDetails,
     "./translations": translations
