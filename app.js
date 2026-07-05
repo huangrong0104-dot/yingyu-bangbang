@@ -9,10 +9,11 @@ let modalAudioPath = "";
 let modalWordKey = "";
 let preferredVoice = null;
 let onlineAudio = null;
-const appVersion = "20260705-10";
+const appVersion = "20260705-18";
 
 const state = {
-  tab: "today"
+  tab: "today",
+  todayModule: ""
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -132,6 +133,249 @@ const relatedMeanings = {
   enhance: "增强/提升",
   submit: "提交",
   proceed: "继续推进"
+};
+
+const wordExpansions = {
+  meeting: {
+    roots: [
+      { word: "meet", meaning: "会面；碰头" },
+      { word: "meeting", meaning: "会议；会面" }
+    ],
+    phrases: [
+      { word: "meeting minutes", meaning: "会议纪要" },
+      { word: "meeting room", meaning: "会议室" },
+      { word: "meeting agenda", meaning: "会议议程" }
+    ]
+  },
+  agenda: {
+    roots: [{ word: "agenda", meaning: "议程；待办事项" }],
+    phrases: [
+      { word: "set the agenda", meaning: "确定会议议程" },
+      { word: "agenda item", meaning: "议程事项" },
+      { word: "share the agenda", meaning: "发送会议议程" }
+    ]
+  },
+  attend: {
+    roots: [
+      { word: "attend", meaning: "参加；出席" },
+      { word: "attendance", meaning: "出席；考勤" },
+      { word: "attendee", meaning: "参会人" }
+    ],
+    phrases: [
+      { word: "attend a meeting", meaning: "参加会议" },
+      { word: "attend training", meaning: "参加培训" },
+      { word: "attendance record", meaning: "考勤记录" }
+    ]
+  },
+  schedule: {
+    roots: [
+      { word: "schedule", meaning: "日程；安排" },
+      { word: "reschedule", meaning: "重新安排时间" },
+      { word: "scheduled", meaning: "已安排的" }
+    ],
+    phrases: [
+      { word: "project schedule", meaning: "项目排期" },
+      { word: "schedule a call", meaning: "安排电话会议" },
+      { word: "schedule conflict", meaning: "日程冲突" }
+    ]
+  },
+  progress: {
+    roots: [
+      { word: "progress", meaning: "进展" },
+      { word: "in progress", meaning: "进行中" },
+      { word: "progressive", meaning: "逐步推进的" }
+    ],
+    phrases: [
+      { word: "progress update", meaning: "进展更新" },
+      { word: "track progress", meaning: "跟踪进度" },
+      { word: "project progress", meaning: "项目进展" }
+    ]
+  },
+  status: {
+    roots: [{ word: "status", meaning: "状态；进展情况" }],
+    phrases: [
+      { word: "status update", meaning: "状态更新" },
+      { word: "current status", meaning: "当前状态" },
+      { word: "status report", meaning: "状态报告" }
+    ]
+  },
+  email: {
+    roots: [
+      { word: "mail", meaning: "邮件" },
+      { word: "email", meaning: "电子邮件" },
+      { word: "mailbox", meaning: "邮箱" }
+    ],
+    phrases: [
+      { word: "email thread", meaning: "邮件往来串" },
+      { word: "email subject", meaning: "邮件标题" },
+      { word: "email signature", meaning: "邮件签名" }
+    ]
+  },
+  document: {
+    roots: [
+      { word: "document", meaning: "文件；文档" },
+      { word: "documentation", meaning: "文档资料" },
+      { word: "documented", meaning: "已记录的" }
+    ],
+    phrases: [
+      { word: "project document", meaning: "项目文档" },
+      { word: "document review", meaning: "文档评审" },
+      { word: "document version", meaning: "文档版本" }
+    ]
+  },
+  requirement: {
+    roots: [
+      { word: "require", meaning: "要求；需要" },
+      { word: "required", meaning: "必需的" },
+      { word: "requirement", meaning: "需求；要求" }
+    ],
+    phrases: [
+      { word: "business requirement", meaning: "业务需求" },
+      { word: "requirement change", meaning: "需求变更" },
+      { word: "confirm requirements", meaning: "确认需求" }
+    ]
+  },
+  issue: {
+    roots: [
+      { word: "issue", meaning: "问题；事项" },
+      { word: "reissue", meaning: "重新发出" }
+    ],
+    phrases: [
+      { word: "open issue", meaning: "未解决问题" },
+      { word: "known issue", meaning: "已知问题" },
+      { word: "issue tracker", meaning: "问题跟踪表/系统" }
+    ]
+  },
+  project: {
+    roots: [
+      { word: "project", meaning: "项目" },
+      { word: "projected", meaning: "预计的" },
+      { word: "projection", meaning: "预测；预估" }
+    ],
+    phrases: [
+      { word: "project owner", meaning: "项目负责人" },
+      { word: "project timeline", meaning: "项目时间线" },
+      { word: "project scope", meaning: "项目范围" }
+    ]
+  },
+  client: {
+    roots: [
+      { word: "client", meaning: "客户；委托方" },
+      { word: "customer", meaning: "客户；消费者" }
+    ],
+    phrases: [
+      { word: "client request", meaning: "客户需求/请求" },
+      { word: "client feedback", meaning: "客户反馈" },
+      { word: "client meeting", meaning: "客户会议" }
+    ]
+  },
+  approval: {
+    roots: [
+      { word: "approve", meaning: "批准；同意" },
+      { word: "approval", meaning: "批准" },
+      { word: "approved", meaning: "已批准的" }
+    ],
+    phrases: [
+      { word: "approval process", meaning: "审批流程" },
+      { word: "pending approval", meaning: "等待审批" },
+      { word: "final approval", meaning: "最终批准" }
+    ]
+  },
+  report: {
+    roots: [
+      { word: "report", meaning: "报告；汇报" },
+      { word: "reported", meaning: "已报告的" },
+      { word: "reporting", meaning: "汇报工作" }
+    ],
+    phrases: [
+      { word: "daily report", meaning: "日报" },
+      { word: "weekly report", meaning: "周报" },
+      { word: "report summary", meaning: "报告摘要" }
+    ]
+  },
+  data: {
+    roots: [
+      { word: "data", meaning: "数据" },
+      { word: "database", meaning: "数据库" },
+      { word: "dataset", meaning: "数据集" }
+    ],
+    phrases: [
+      { word: "data analysis", meaning: "数据分析" },
+      { word: "data source", meaning: "数据来源" },
+      { word: "data report", meaning: "数据报告" }
+    ]
+  },
+  access: {
+    roots: [
+      { word: "access", meaning: "访问权限" },
+      { word: "accessible", meaning: "可访问的" }
+    ],
+    phrases: [
+      { word: "access request", meaning: "权限申请" },
+      { word: "access level", meaning: "权限级别" },
+      { word: "grant access", meaning: "授予权限" }
+    ]
+  },
+  estimate: {
+    roots: [
+      { word: "estimate", meaning: "预估" },
+      { word: "estimated", meaning: "预计的" },
+      { word: "estimation", meaning: "估算" }
+    ],
+    phrases: [
+      { word: "time estimate", meaning: "时间预估" },
+      { word: "cost estimate", meaning: "成本预估" },
+      { word: "rough estimate", meaning: "粗略估算" }
+    ]
+  },
+  support: {
+    roots: [
+      { word: "support", meaning: "支持；协助" },
+      { word: "supportive", meaning: "支持性的" },
+      { word: "supported", meaning: "受支持的" }
+    ],
+    phrases: [
+      { word: "customer support", meaning: "客户支持" },
+      { word: "technical support", meaning: "技术支持" },
+      { word: "support ticket", meaning: "支持工单" }
+    ]
+  },
+  communicate: {
+    roots: [
+      { word: "communicate", meaning: "沟通" },
+      { word: "communication", meaning: "沟通；交流" },
+      { word: "communicator", meaning: "沟通者" }
+    ],
+    phrases: [
+      { word: "clear communication", meaning: "清晰沟通" },
+      { word: "communication channel", meaning: "沟通渠道" },
+      { word: "communicate with the team", meaning: "和团队沟通" }
+    ]
+  },
+  coordinate: {
+    roots: [
+      { word: "coordinate", meaning: "协调" },
+      { word: "coordination", meaning: "协调工作" },
+      { word: "coordinator", meaning: "协调人" }
+    ],
+    phrases: [
+      { word: "coordinate resources", meaning: "协调资源" },
+      { word: "team coordination", meaning: "团队协调" },
+      { word: "coordinate the schedule", meaning: "协调日程" }
+    ]
+  },
+  deliver: {
+    roots: [
+      { word: "deliver", meaning: "交付" },
+      { word: "delivery", meaning: "交付；发货" },
+      { word: "deliverable", meaning: "交付物" }
+    ],
+    phrases: [
+      { word: "deliver on time", meaning: "按时交付" },
+      { word: "final deliverable", meaning: "最终交付物" },
+      { word: "delivery date", meaning: "交付日期" }
+    ]
+  }
 };
 
 const relatedPhonetics = {
@@ -453,9 +697,32 @@ const browserAudioModule = {
   }
 };
 
+const removedLessonThemes = new Set(["确认信息"]);
+
+function prepareLessons(items) {
+  const kept = (items || []).filter((item) => !removedLessonThemes.has(item.theme));
+  const dayMap = new Map();
+  const prepared = kept.map((item, index) => {
+    const nextDay = index + 1;
+    dayMap.set(item.day, nextDay);
+    return {
+      ...item,
+      day: nextDay
+    };
+  });
+  const nextCurrentDay = dayMap.get(currentDay)
+    || prepared.find((item) => item.day >= currentDay)?.day
+    || prepared.length
+    || 1;
+
+  currentDay = Math.min(Math.max(nextCurrentDay, 1), prepared.length || 1);
+  completedDays = [...new Set(completedDays.map((day) => dayMap.get(day)).filter(Boolean))];
+  return prepared;
+}
+
 async function loadLessons() {
   if (Array.isArray(window.YINGBANG_LESSONS)) {
-    lessons = window.YINGBANG_LESSONS;
+    lessons = prepareLessons(window.YINGBANG_LESSONS);
     return;
   }
 
@@ -470,7 +737,7 @@ async function loadLessons() {
     "./translations": translations
   });
 
-  lessons = lessonModule.lessons;
+  lessons = prepareLessons(lessonModule.lessons);
 }
 
 function lesson() {
@@ -522,7 +789,9 @@ function escapeHtml(text) {
   return String(text)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function optionalBlock(label, content, className = "memory") {
@@ -572,6 +841,96 @@ function linkWords(text) {
     const key = normalizeWord(token);
     return `<button class="inline-word" data-lookup-word="${key}">${token}</button>`;
   });
+}
+
+function uniqueExpansionItems(items) {
+  const seen = new Set();
+  return (items || []).filter((item) => {
+    const key = normalizeWord(item.word);
+    if (!key || seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function expansionTermForKey(key) {
+  for (const group of Object.values(wordExpansions)) {
+    const item = [...(group.roots || []), ...(group.phrases || [])]
+      .find((entry) => normalizeWord(entry.word) === key);
+    if (item) {
+      return item;
+    }
+  }
+  return null;
+}
+
+function inferredRootWords(word) {
+  const key = normalizeWord(word);
+  if (!key || key.includes(" ")) {
+    return [];
+  }
+
+  const roots = [];
+  if (key.endsWith("ing") && key.length > 5) {
+    roots.push({ word: key.slice(0, -3), meaning: "可能的动词原形，适合顺手查一下" });
+  }
+  if (key.endsWith("ed") && key.length > 4) {
+    roots.push({ word: key.slice(0, -2), meaning: "可能的动词原形，表示动作基础词" });
+  }
+  if (key.endsWith("tion") && key.length > 6) {
+    roots.push({ word: key.slice(0, -4), meaning: "可能的动词/名词基础部分" });
+  }
+  return roots;
+}
+
+function defaultDedicatedPhrases(word) {
+  const key = normalizeWord(word);
+  if (!key || key.includes(" ")) {
+    return [];
+  }
+
+  return [
+    { word: `${key} update`, meaning: `关于 ${key} 的进展更新` },
+    { word: `${key} review`, meaning: `对 ${key} 做检查/评审` },
+    { word: `${key} request`, meaning: `与 ${key} 相关的请求` }
+  ];
+}
+
+function expansionsForWord(word) {
+  const key = normalizeWord(word);
+  const preset = wordExpansions[key] || {};
+  const roots = uniqueExpansionItems(preset.roots || inferredRootWords(word)).slice(0, 3);
+  const phrases = uniqueExpansionItems(preset.phrases || defaultDedicatedPhrases(word)).slice(0, 3);
+  return { roots, phrases };
+}
+
+function expansionGroupHtml(title, items) {
+  if (!items.length) {
+    return "";
+  }
+
+  return `
+    <div class="expansion-group">
+      <div class="mini-label">${title}</div>
+      ${items.map((item) => `
+        <button class="expansion-item" data-lookup-word="${escapeHtml(item.word)}">
+          <span>${escapeHtml(item.word)}</span>
+          <small>${escapeHtml(item.meaning)}</small>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function expansionsHtml(expansions) {
+  const roots = expansions?.roots || [];
+  const phrases = expansions?.phrases || [];
+  return [
+    expansionGroupHtml("同根词", roots),
+    expansionGroupHtml("专用词组", phrases)
+  ].filter(Boolean).join("") || `<div class="muted-line">暂无可补充的同根词或专用词组。</div>`;
 }
 
 function speakText(text) {
@@ -657,8 +1016,13 @@ function play(path, text) {
 function detailForWord(rawWord) {
   const key = normalizeWord(rawWord);
   if (glossary[key]) {
-    return glossary[key];
+    return {
+      ...glossary[key],
+      expansions: expansionsForWord(glossary[key].word)
+    };
   }
+  const expansionTerm = expansionTermForKey(key);
+  const meaning = expansionTerm?.meaning || relatedMeanings[key] || "相关职场词";
   const examples = relatedExampleBank[key] || [{
     text: `Please add "${rawWord}" to the project notes.`,
     translation: `请把“${rawWord}”加到项目备注里。`
@@ -668,7 +1032,11 @@ function detailForWord(rawWord) {
     word: rawWord,
     meaning: relatedMeanings[key] || "相关职场词",
     phonetic: relatedPhonetics[key] || "",
+    meaning,
+    meanings: [meaning],
     meanings: [relatedMeanings[key] || "相关职场词"],
+    meaning,
+    meanings: [meaning],
     similar: [],
     memory: "",
     example: examples[0].text,
@@ -677,6 +1045,7 @@ function detailForWord(rawWord) {
     sentence: "",
     sentenceCn: "",
     understanding: "",
+    expansions: expansionsForWord(rawWord),
     audio: ""
   };
 }
@@ -718,6 +1087,7 @@ function openWordModal(rawWord) {
   $("#modalSimilar").innerHTML = detail.similar.length
     ? detail.similar.map((text) => `<button class="tag tag-button" data-lookup-word="${escapeHtml(text)}">${escapeHtml(text)}</button>`).join("")
     : `<span class="tag">暂无</span>`;
+  $("#modalExpansions").innerHTML = expansionsHtml(detail.expansions);
   $("#modalExamples").innerHTML = examplesHtml(detail);
   $("#modalUnderstandingBlock").style.display = detail.understanding ? "" : "none";
   $("#modalMemoryBlock").style.display = detail.memory ? "" : "none";
@@ -755,32 +1125,89 @@ function renderHeader() {
   $("#todayTitle").textContent = item.theme;
 }
 
+function todayModuleCards() {
+  return {
+    words: $("#wordList")?.closest(".card"),
+    dialogue: $("#dialogueList")?.closest(".card"),
+    quiz: $("#quizList")?.closest(".card")
+  };
+}
+
+function ensureTodayModulePicker() {
+  if ($("#todayModulePicker")) {
+    return;
+  }
+
+  const intro = $("#todayTitle").closest(".card");
+  const picker = document.createElement("div");
+  picker.className = "module-picker";
+  picker.id = "todayModulePicker";
+  picker.setAttribute("aria-label", "今日学习模块");
+  picker.innerHTML = `
+    <button class="module-button" data-today-module="words">
+      <strong>单词</strong>
+      <span>10 个工作词</span>
+    </button>
+    <button class="module-button" data-today-module="dialogue">
+      <strong>对话</strong>
+      <span>6 句跟读</span>
+    </button>
+    <button class="module-button" data-today-module="quiz">
+      <strong>测试</strong>
+      <span>新词小测</span>
+    </button>
+  `;
+  intro.insertAdjacentElement("afterend", picker);
+
+  Object.entries(todayModuleCards()).forEach(([name, card]) => {
+    if (card) {
+      card.classList.add("today-module");
+      card.dataset.todayModulePanel = name;
+    }
+  });
+}
+
+function updateTodayModules() {
+  ensureTodayModulePicker();
+  document.querySelectorAll("[data-today-module]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.todayModule === state.todayModule);
+  });
+
+  Object.entries(todayModuleCards()).forEach(([name, card]) => {
+    if (card) {
+      card.hidden = state.todayModule !== name;
+    }
+  });
+}
+
+function switchTodayModule(moduleName) {
+  state.todayModule = state.todayModule === moduleName ? "" : moduleName;
+  updateTodayModules();
+  if (state.todayModule) {
+    todayModuleCards()[state.todayModule]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}
+
 function renderWords() {
   $("#wordList").innerHTML = wordsForLesson()
     .map((word, index) => `
       <article class="word-card">
-        <div class="word-head">
-          <div>
-            <div class="word-title-row">
-              <span class="word-number">${index + 1}</span>
+        <div class="word-head compact-word-head">
+          <div class="word-title-row">
+            <span class="word-number">${index + 1}</span>
+            <div class="compact-word-main">
               <button class="word word-button" data-lookup-word="${escapeHtml(word.word)}">${word.word}</button>
+              <span class="compact-meaning">${word.meaning}</span>
             </div>
-            <div class="phonetic">${word.phonetic}</div>
           </div>
           <div class="word-actions">
             <button class="favorite ${isFavoriteWord(word.word) ? "active" : ""}" data-favorite-word="${escapeHtml(word.word)}">${isFavoriteWord(word.word) ? "已收藏" : "收藏"}</button>
             <button class="play" data-audio="${word.audio}" data-text="${word.word}">发音</button>
           </div>
         </div>
-        <div class="meaning">${word.meaning}</div>
-        <div class="label">多重解释</div>
-        ${word.meanings.map((text) => `<div class="line">${text}</div>`).join("")}
-        <div class="label">相似/相关词</div>
-        <div class="tags">${word.similar.map((text) => `<button class="tag tag-button" data-lookup-word="${escapeHtml(text)}">${text}</button>`).join("")}</div>
-        <div class="label">例句</div>
-        ${examplesHtml(word)}
-        ${optionalBlock("帮助理解", word.understanding)}
-        ${optionalBlock("联想记忆", word.memory)}
       </article>
     `)
     .join("");
@@ -842,6 +1269,322 @@ function renderDialogue() {
     .join("");
 }
 
+function quizSentence() {
+  const word = wordsForLesson()[0];
+  const example = word && word.examples && word.examples[0];
+  const dialogue = lesson().dialogueCards[0];
+  return example || {
+    text: dialogue ? dialogue.text : "I have a meeting this afternoon.",
+    translation: dialogue ? dialogue.translation : "我今天下午有一个会议。"
+  };
+}
+
+function optionSeed(text) {
+  return String(text).split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
+function quizOptions(answerWord, words) {
+  const currentWords = new Set(words.map((word) => normalizeWord(word.word)));
+  const broadPool = [
+    "deadline",
+    "attachment",
+    "budget",
+    "permission",
+    "client",
+    "invoice",
+    "bug",
+    "delivery",
+    "password",
+    "chart",
+    "vendor",
+    "ticket",
+    "responsibility",
+    "quality",
+    "contract",
+    "support"
+  ];
+  const seed = optionSeed(answerWord.word);
+  const distractors = broadPool
+    .map((word) => detailForWord(word))
+    .filter((word) => normalizeWord(word.word) !== normalizeWord(answerWord.word))
+    .filter((word) => !currentWords.has(normalizeWord(word.word)))
+    .sort((a, b) => ((optionSeed(a.word) + seed) % 17) - ((optionSeed(b.word) + seed) % 17))
+    .slice(0, 3);
+
+  return [answerWord, ...distractors]
+    .map((word) => ({
+      word: word.word,
+      meaning: word.meaning
+    }))
+    .sort((a, b) => ((optionSeed(a.word) + seed) % 11) - ((optionSeed(b.word) + seed) % 11));
+}
+
+function uniqueByWord(items) {
+  const seen = new Set();
+  return (items || []).filter((item) => {
+    const key = normalizeWord(item.word);
+    if (!key || seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function quizPhraseItems(words) {
+  return uniqueByWord(words.flatMap((word) => {
+    const detail = detailForWord(word.word);
+    return (detail.expansions?.phrases || []).map((phrase) => ({
+      word: phrase.word,
+      meaning: phrase.meaning
+    }));
+  }));
+}
+
+function quizChoiceBlock(item, options, id, title) {
+  return `
+    <div class="quiz-mini">
+      <div class="quiz-mini-title">${escapeHtml(title)}</div>
+      <div class="quiz-prompt">${escapeHtml(item.word)}</div>
+      <div class="quiz-options">
+        ${options.map((option) => `
+          <button class="quiz-option" data-quiz-choice="${escapeHtml(option.word)}" data-quiz-answer="${escapeHtml(item.word)}" data-feedback-id="${id}">${escapeHtml(option.meaning)}</button>
+        `).join("")}
+      </div>
+      <div class="quiz-feedback" id="${id}"></div>
+    </div>
+  `;
+}
+
+function quizSpellBlock(item, id, title) {
+  return `
+    <div class="quiz-mini">
+      <div class="quiz-mini-title">${escapeHtml(title)}</div>
+      <div class="quiz-prompt">${escapeHtml(item.meaning)}</div>
+      <div class="quiz-answer-row">
+        <input class="quiz-input" id="input-${id}" type="text" autocomplete="off" placeholder="输入英文" />
+        <button class="secondary" data-check-quiz="spell" data-answer="${escapeHtml(item.word)}" data-input-id="input-${id}" data-feedback-id="${id}">检查</button>
+      </div>
+      <div class="quiz-feedback" id="${id}"></div>
+    </div>
+  `;
+}
+
+function quizZhToEnBlock(sentence, id, title) {
+  return `
+    <div class="quiz-mini">
+      <div class="quiz-mini-title">${escapeHtml(title)}</div>
+      <div class="quiz-prompt">${escapeHtml(sentence.translation || "")}</div>
+      <textarea class="quiz-textarea" id="input-${id}" rows="2" placeholder="按你的理解写英文，意思接近即可"></textarea>
+      <button class="secondary quiz-check" data-check-quiz="zhToEn" data-answer="${escapeHtml(sentence.text)}" data-input-id="input-${id}" data-feedback-id="${id}">检查</button>
+      <div class="quiz-feedback" id="${id}"></div>
+    </div>
+  `;
+}
+
+function quizEnToZhBlock(sentence, id, title) {
+  return `
+    <div class="quiz-mini">
+      <div class="quiz-mini-title">${escapeHtml(title)}</div>
+      <div class="quiz-prompt">${linkWords(sentence.text)}</div>
+      <textarea class="quiz-textarea" id="input-${id}" rows="2" placeholder="写出大概中文意思"></textarea>
+      <button class="secondary quiz-check" data-check-quiz="enToZh" data-answer="${escapeHtml(sentence.translation || "")}" data-input-id="input-${id}" data-feedback-id="${id}">检查</button>
+      <div class="quiz-feedback" id="${id}"></div>
+    </div>
+  `;
+}
+
+function quizSection(title, subtitle, body, open = false) {
+  return `
+    <details class="quiz-item" ${open ? "open" : ""}>
+      <summary>${escapeHtml(title)}</summary>
+      <div class="quiz-body">
+        <div class="quiz-section-note">${escapeHtml(subtitle)}</div>
+        ${body}
+      </div>
+    </details>
+  `;
+}
+
+function normalizeAnswer(text) {
+  return String(text || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, " ");
+}
+
+function importantEnglishWords(text) {
+  const stopWords = new Set(["the", "a", "an", "to", "of", "in", "on", "for", "and", "is", "are", "am", "i", "we", "you", "it", "this", "that", "with"]);
+  return normalizeAnswer(text)
+    .split(/\s+/)
+    .filter((word) => word.length > 2 && !stopWords.has(word));
+}
+
+function renderQuiz() {
+  const words = wordsForLesson();
+  const choiceWord = words[0];
+  const spellWord = words[1] || words[0];
+  const sentence = quizSentence();
+
+  if (!choiceWord || !spellWord) {
+    $("#quizList").innerHTML = `<div class="empty">今天的小测还没准备好。</div>`;
+    return;
+  }
+
+  const choices = quizOptions(choiceWord, words);
+
+  $("#quizList").innerHTML = `
+    <details class="quiz-item" open>
+      <summary>1. 看英文，选中文</summary>
+      <div class="quiz-body">
+        <div class="quiz-prompt">${escapeHtml(choiceWord.word)}</div>
+        <div class="quiz-options">
+          ${choices.map((option) => `
+            <button class="quiz-option" data-quiz-choice="${escapeHtml(option.word)}" data-quiz-answer="${escapeHtml(choiceWord.word)}">${escapeHtml(option.meaning)}</button>
+          `).join("")}
+        </div>
+        <div class="quiz-feedback" id="quizChoiceFeedback"></div>
+      </div>
+    </details>
+
+    <details class="quiz-item">
+      <summary>2. 看中文，写英文</summary>
+      <div class="quiz-body">
+        <div class="quiz-prompt">${escapeHtml(spellWord.meaning)}</div>
+        <div class="quiz-answer-row">
+          <input class="quiz-input" id="quizSpellInput" type="text" autocomplete="off" placeholder="输入英文单词" />
+          <button class="secondary" data-check-quiz="spell" data-answer="${escapeHtml(spellWord.word)}">检查</button>
+        </div>
+        <div class="quiz-feedback" id="quizSpellFeedback"></div>
+      </div>
+    </details>
+
+    <details class="quiz-item">
+      <summary>3. 看中文句子，写英文</summary>
+      <div class="quiz-body">
+        <div class="quiz-prompt">${escapeHtml(sentence.translation || "")}</div>
+        <textarea class="quiz-textarea" id="quizZhToEnInput" rows="2" placeholder="按你的理解写英文，意思接近即可"></textarea>
+        <button class="secondary quiz-check" data-check-quiz="zhToEn" data-answer="${escapeHtml(sentence.text)}">检查</button>
+        <div class="quiz-feedback" id="quizZhToEnFeedback"></div>
+      </div>
+    </details>
+
+    <details class="quiz-item">
+      <summary>4. 看英文句子，写中文</summary>
+      <div class="quiz-body">
+        <div class="quiz-prompt">${linkWords(sentence.text)}</div>
+        <textarea class="quiz-textarea" id="quizEnToZhInput" rows="2" placeholder="写出大概中文意思"></textarea>
+        <button class="secondary quiz-check" data-check-quiz="enToZh" data-answer="${escapeHtml(sentence.translation || "")}">检查</button>
+        <div class="quiz-feedback" id="quizEnToZhFeedback"></div>
+      </div>
+    </details>
+  `;
+}
+
+function setQuizFeedback(id, message, passed) {
+  const target = document.getElementById(id);
+  if (!target) {
+    return;
+  }
+  target.textContent = message;
+  target.classList.toggle("ok", Boolean(passed));
+  target.classList.toggle("warn", !passed);
+}
+
+function checkQuiz(type, answer) {
+  if (type === "spell") {
+    const input = $("#quizSpellInput").value;
+    const passed = normalizeAnswer(input) === normalizeAnswer(answer);
+    setQuizFeedback("quizSpellFeedback", passed ? "答对了。" : `再看一眼：${answer}`, passed);
+    return;
+  }
+
+  if (type === "zhToEn") {
+    const input = $("#quizZhToEnInput").value;
+    const userWords = new Set(importantEnglishWords(input));
+    const answerWords = importantEnglishWords(answer);
+    const matched = answerWords.filter((word) => userWords.has(word)).length;
+    const passed = normalizeAnswer(input) === normalizeAnswer(answer) || matched >= Math.min(2, answerWords.length);
+    setQuizFeedback("quizZhToEnFeedback", `${passed ? "基本可以。" : "可以再接近一点。"} 参考：${answer}`, passed);
+    return;
+  }
+
+  if (type === "enToZh") {
+    const input = $("#quizEnToZhInput").value.trim();
+    const passed = input.length >= 4;
+    setQuizFeedback("quizEnToZhFeedback", `${passed ? "已记录，意思接近就算通过。" : "先写一句中文意思。"} 参考：${answer}`, passed);
+  }
+}
+
+function renderQuiz() {
+  const words = wordsForLesson();
+  const phrases = quizPhraseItems(words);
+  const sentences = lesson().dialogueCards || [];
+
+  if (!words.length) {
+    $("#quizList").innerHTML = `<div class="empty">今天的小测还没准备好。</div>`;
+    return;
+  }
+
+  const wordChoiceQuestions = words.map((word, index) =>
+    quizChoiceBlock(word, quizOptions(word, words), `quizWordChoice${index}`, `${index + 1}. ${word.word}`)
+  ).join("");
+  const wordSpellQuestions = words.map((word, index) =>
+    quizSpellBlock(word, `quizWordSpell${index}`, `${index + 1}. ${word.meaning}`)
+  ).join("");
+  const phraseChoiceQuestions = phrases.length
+    ? phrases.map((phrase, index) =>
+      quizChoiceBlock(phrase, quizOptions(phrase, words), `quizPhraseChoice${index}`, `${index + 1}. ${phrase.word}`)
+    ).join("")
+    : `<div class="empty">今天没有额外专用词组。</div>`;
+  const zhToEnQuestions = sentences.map((sentence, index) =>
+    quizZhToEnBlock(sentence, `quizZhToEn${index}`, `${index + 1}. 中译英`)
+  ).join("");
+  const enToZhQuestions = sentences.map((sentence, index) =>
+    quizEnToZhBlock(sentence, `quizEnToZh${index}`, `${index + 1}. 英译中`)
+  ).join("");
+
+  $("#quizList").innerHTML = `
+    ${quizSection("1. 单词：英文选中文", `覆盖今天全部 ${words.length} 个新词。`, wordChoiceQuestions, true)}
+    ${quizSection("2. 单词：中文写英文", `覆盖今天全部 ${words.length} 个新词。`, wordSpellQuestions)}
+    ${quizSection("3. 专用词组：英文选中文", `覆盖今天补充的 ${phrases.length} 个职场词组。`, phraseChoiceQuestions)}
+    ${quizSection("4. 句子：中文写英文", `覆盖跟读对话里的 ${sentences.length} 句。`, zhToEnQuestions)}
+    ${quizSection("5. 句子：英文写中文", `覆盖跟读对话里的 ${sentences.length} 句。`, enToZhQuestions)}
+  `;
+}
+
+function checkQuiz(type, answer, inputId = "", feedbackId = "") {
+  const feedbackTarget = feedbackId || {
+    spell: "quizSpellFeedback",
+    zhToEn: "quizZhToEnFeedback",
+    enToZh: "quizEnToZhFeedback"
+  }[type];
+  const inputTarget = inputId ? document.getElementById(inputId) : null;
+
+  if (type === "spell") {
+    const input = inputTarget ? inputTarget.value : ($("#quizSpellInput")?.value || "");
+    const passed = normalizeAnswer(input) === normalizeAnswer(answer);
+    setQuizFeedback(feedbackTarget, passed ? "答对了。" : `再看一眼：${answer}`, passed);
+    return;
+  }
+
+  if (type === "zhToEn") {
+    const input = inputTarget ? inputTarget.value : ($("#quizZhToEnInput")?.value || "");
+    const userWords = new Set(importantEnglishWords(input));
+    const answerWords = importantEnglishWords(answer);
+    const matched = answerWords.filter((word) => userWords.has(word)).length;
+    const passed = normalizeAnswer(input) === normalizeAnswer(answer) || matched >= Math.min(2, answerWords.length);
+    setQuizFeedback(feedbackTarget, `${passed ? "基本可以。" : "可以再接近一点。"} 参考：${answer}`, passed);
+    return;
+  }
+
+  if (type === "enToZh") {
+    const input = inputTarget ? inputTarget.value.trim() : ($("#quizEnToZhInput")?.value.trim() || "");
+    const passed = input.length >= 4;
+    setQuizFeedback(feedbackTarget, `${passed ? "已记录，意思接近就算通过。" : "先写一句中文意思。"} 参考：${answer}`, passed);
+  }
+}
+
 function renderPlan() {
   $("#planList").innerHTML = lessons
     .map((item) => `
@@ -880,6 +1623,8 @@ function renderToday() {
   renderHeader();
   renderWords();
   renderDialogue();
+  renderQuiz();
+  updateTodayModules();
   $("#outputTask").textContent = lesson().output;
   $("#completeBtn").textContent = completedDays.includes(lesson().day)
     ? "今天已完成，看看下一天"
@@ -903,12 +1648,44 @@ function switchTab(tab) {
 }
 
 document.addEventListener("click", (event) => {
+  const quizChoice = event.target.closest("[data-quiz-choice]");
+  const quizCheck = event.target.closest("[data-check-quiz]");
+
+  if (quizChoice?.dataset.feedbackId) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const passed = quizChoice.dataset.quizChoice === quizChoice.dataset.quizAnswer;
+    quizChoice.parentElement.querySelectorAll(".quiz-option").forEach((button) => {
+      button.classList.toggle("selected", button === quizChoice);
+      button.classList.toggle("wrong", button === quizChoice && !passed);
+      button.classList.toggle("right", button.dataset.quizChoice === quizChoice.dataset.quizAnswer);
+    });
+    setQuizFeedback(quizChoice.dataset.feedbackId, passed ? "答对了。" : "选错了，绿色的是正确答案。", passed);
+    return;
+  }
+
+  if (quizCheck?.dataset.feedbackId) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    checkQuiz(quizCheck.dataset.checkQuiz, quizCheck.dataset.answer, quizCheck.dataset.inputId, quizCheck.dataset.feedbackId);
+  }
+}, true);
+
+document.addEventListener("click", (event) => {
   const playButton = event.target.closest("[data-audio]");
   const lookupWord = event.target.closest("[data-lookup-word]");
   const favoriteButton = event.target.closest("[data-favorite-word]");
   const translateButton = event.target.closest("[data-translation-id]");
+  const quizChoice = event.target.closest("[data-quiz-choice]");
+  const quizCheck = event.target.closest("[data-check-quiz]");
   const tabButton = event.target.closest("[data-tab]");
   const planButton = event.target.closest("[data-day]");
+  const todayModuleButton = event.target.closest("[data-today-module]");
+
+  if (todayModuleButton) {
+    switchTodayModule(todayModuleButton.dataset.todayModule);
+    return;
+  }
 
   if (favoriteButton) {
     toggleFavoriteWord(favoriteButton.dataset.favoriteWord);
@@ -930,6 +1707,20 @@ document.addEventListener("click", (event) => {
       const visible = translation.classList.toggle("visible");
       translateButton.textContent = visible ? "隐藏" : "翻译";
     }
+  }
+
+  if (quizChoice) {
+    const passed = quizChoice.dataset.quizChoice === quizChoice.dataset.quizAnswer;
+    quizChoice.parentElement.querySelectorAll(".quiz-option").forEach((button) => {
+      button.classList.toggle("selected", button === quizChoice);
+      button.classList.toggle("wrong", button === quizChoice && !passed);
+      button.classList.toggle("right", button.dataset.quizChoice === quizChoice.dataset.quizAnswer);
+    });
+    setQuizFeedback("quizChoiceFeedback", passed ? "答对了。" : "选错了，绿色的是正确答案。", passed);
+  }
+
+  if (quizCheck) {
+    checkQuiz(quizCheck.dataset.checkQuiz, quizCheck.dataset.answer);
   }
 
   if (tabButton) {
@@ -974,6 +1765,13 @@ $("#completeModalBtn").addEventListener("click", () => {
   saveState();
   closeCompleteModal();
   render();
+});
+
+$("#backTopBtn").addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 });
 
 $("#shuffleBtn").addEventListener("click", renderReview);

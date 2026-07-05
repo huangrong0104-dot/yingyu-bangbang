@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>英语邦邦</title>
-    <link rel="stylesheet" href="./styles.css?v=20260704-6" />
+    <link rel="stylesheet" href="./styles.css?v=20260705-18" />
   </head>
   <body>
     <main class="app">
@@ -50,6 +50,11 @@
           <h2>跟读对话</h2>
           <p class="soft">先听一遍，再跟着 A/B 角色读；点单词可以看解释。</p>
           <div id="dialogueList"></div>
+        </div>
+
+        <div class="card">
+          <h2>今日小测</h2>
+          <div id="quizList"></div>
         </div>
 
         <div class="card">
@@ -104,6 +109,8 @@
         <div id="modalMeanings"></div>
         <div class="label">相似/相关词</div>
         <div class="tags" id="modalSimilar"></div>
+        <div class="label">同根词 / 专用词组</div>
+        <div id="modalExpansions"></div>
         <div class="label">例句</div>
         <div id="modalExamples"></div>
         <div id="modalUnderstandingBlock">
@@ -127,6 +134,8 @@
       </section>
     </div>
 
-    <script src="./app.js?v=20260705-10"></script>
+    <button class="back-top" id="backTopBtn" type="button" aria-label="回到顶部">顶部</button>
+
+    <script src="./app.js?v=20260705-18"></script>
   </body>
 </html>
