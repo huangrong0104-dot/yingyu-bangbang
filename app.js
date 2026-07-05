@@ -9,7 +9,7 @@ let modalAudioPath = "";
 let modalWordKey = "";
 let preferredVoice = null;
 let onlineAudio = null;
-const appVersion = "20260705-8";
+const appVersion = "20260705-9";
 
 const state = {
   tab: "today"
@@ -423,13 +423,27 @@ function dataPaths(name) {
   return [...new Set(paths)];
 }
 
+function audioSlug(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const browserAudioModule = {
+  audioSlug,
+  audioPath(text) {
+    return `${repoBasePath()}/assets/audio/${audioSlug(text)}.wav`;
+  }
+};
+
 async function loadLessons() {
   if (Array.isArray(window.YINGBANG_LESSONS)) {
     lessons = window.YINGBANG_LESSONS;
     return;
   }
 
-  const audioModule = await loadCommonJs(dataPaths("audio.js"), {});
+  const audioModule = browserAudioModule;
   const wordDetails = await loadCommonJs(dataPaths("wordDetails.js"), {
     "./audio": audioModule
   });
