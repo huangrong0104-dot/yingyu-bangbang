@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>英语邦邦</title>
-    <link rel="stylesheet" href="./styles.css?v=20260704-2" />
+    <link rel="stylesheet" href="./styles.css?v=20260704-6" />
   </head>
   <body>
     <main class="app">
@@ -36,24 +36,19 @@
         <div class="card intro">
           <div>
             <h2 id="todayTitle">加载中...</h2>
-            <p>记 5 个词，跟读 3 句，开口 1 次。</p>
+            <p>记 10 个词，跟读一段工作对话，开口 1 次。</p>
           </div>
           <span>15分钟</span>
         </div>
 
         <div class="card">
-          <h2>5个工作词</h2>
+          <h2>10个工作词</h2>
           <div id="wordList"></div>
         </div>
 
         <div class="card">
-          <h2>跟读3句</h2>
-          <div id="sentenceList"></div>
-        </div>
-
-        <div class="card">
-          <h2>工作小对话</h2>
-          <p class="soft">跟着 A/B 角色读一遍，再换角色读一遍。</p>
+          <h2>跟读对话</h2>
+          <p class="soft">先听一遍，再跟着 A/B 角色读；点单词可以看解释。</p>
           <div id="dialogueList"></div>
         </div>
 
@@ -75,8 +70,14 @@
 
       <section class="panel" id="reviewPanel">
         <div class="card">
+          <h2>我的收藏词</h2>
+          <p class="soft">把陌生词收藏起来，每天先听、看、说一遍。</p>
+          <div id="favoriteList"></div>
+        </div>
+
+        <div class="card">
           <h2>今日复习</h2>
-          <p class="soft">从已完成内容里抽 5 个词。先眼熟，再嘴熟。</p>
+          <p class="soft">从已完成内容里抽 10 个词。先眼熟，再嘴熟。</p>
           <button class="secondary" id="shuffleBtn">换一组</button>
           <div id="reviewList"></div>
         </div>
@@ -95,18 +96,37 @@
           <button class="modal-close" data-close-word-modal>关闭</button>
         </div>
         <p class="meaning" id="modalMeaning"></p>
-        <button class="primary modal-play" id="modalPlay">播放发音</button>
+        <div class="modal-actions">
+          <button class="favorite modal-favorite" id="modalFavorite" data-favorite-word="">收藏</button>
+          <button class="primary modal-play" id="modalPlay">播放发音</button>
+        </div>
         <div class="label">多重解释</div>
         <div id="modalMeanings"></div>
         <div class="label">相似/相关词</div>
         <div class="tags" id="modalSimilar"></div>
         <div class="label">例句</div>
-        <div class="line" id="modalExample"></div>
-        <div class="memory" id="modalMemory"></div>
+        <div id="modalExamples"></div>
+        <div id="modalUnderstandingBlock">
+          <div class="label">帮助理解</div>
+          <div class="memory" id="modalUnderstanding"></div>
+        </div>
+        <div id="modalMemoryBlock">
+          <div class="label">联想记忆</div>
+          <div class="memory" id="modalMemory"></div>
+        </div>
       </section>
     </div>
 
-    <script src="./data.js?v=20260704-2"></script>
-    <script src="./app.js?v=20260704-2"></script>
+    <div class="word-modal" id="completeModal" aria-hidden="true">
+      <div class="word-modal-backdrop" data-close-complete-modal></div>
+      <section class="word-modal-card complete-modal-card" role="dialog" aria-modal="true" aria-label="完成打卡">
+        <div class="trophy-mark">🏆</div>
+        <h2>恭喜完成今日打卡</h2>
+        <p id="completeModalText">今天的 15 分钟已经完成。</p>
+        <button class="primary" id="completeModalBtn">继续学习</button>
+      </section>
+    </div>
+
+    <script src="./app.js?v=20260705-7"></script>
   </body>
 </html>
